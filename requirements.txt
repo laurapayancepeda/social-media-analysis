@@ -10,3 +10,4 @@ langdetect
 country_converter
 beautifulsoup4
 requests
+geotext
