@@ -1,14 +1,16 @@
-streamlit
-pandas
-openpyxl
-transformers
-torch
-sentencepiece
-deep-translator
-langdetect
-country_converter
-beautifulsoup4
-requests
-geotext
+# Core
+streamlit==1.29.0
+pandas==2.1.0
+openpyxl==3.1.2
+requests==2.31.0
+beautifulsoup4==4.12.2
+
+# NLP & Transformers
+torch==2.1.0
+transformers==4.35.0
+sentencepiece==0.1.99
 spacy==3.8.0
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+deep-translator==1.10.1
+langdetect==1.0.9
+geotext==0.4.0
+country_converter==0.7.3
