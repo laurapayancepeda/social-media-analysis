@@ -3,9 +3,7 @@ from transformers import pipeline
 
 # Use text-generation pipeline for summarization
 summarizer = pipeline(
-    "text-generation",
-    model="sshleifer/distilbart-cnn-12-6",
-    tokenizer="sshleifer/distilbart-cnn-12-6",
+    "summarization", model="sshleifer/distilbart-cnn-12-6", framework="tf"
 )
 
 
