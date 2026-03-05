@@ -4,7 +4,7 @@ import pandas as pd
 from utils.metadata import detect_language, extract_entities, detect_country
 from utils.translator import translate_text
 from utils.sentiment import sentiment_score
-from utils.summarizer import summarize_post
+from utils.summarizer import summarize_post  # now uses SpaCy
 
 st.set_page_config(page_title="Social Media Analysis", layout="wide")
 
@@ -27,7 +27,7 @@ if st.button("Analyze"):
         language = detect_language(post_text)
         countries = detect_country(post_text)
         entities = extract_entities(post_text)
-        summary = summarize_post(post_text)
+        summary = summarize_post(post_text)  # SpaCy summarizer now
 
         st.write(f"**Language:** {language}")
         st.write(f"**Detected Countries:** {countries}")

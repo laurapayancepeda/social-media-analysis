@@ -1,26 +1,29 @@
 # utils/summarizer.py
-from transformers import pipeline
-
-# Use text-generation pipeline for summarization
-summarizer = pipeline(
-    "summarization", model="sshleifer/distilbart-cnn-12-6", framework="tf"
-)
+import spacy
+from spacy.cli import download as spacy_download
 
 
-def summarize_post(text: str, max_length: int = 60) -> str:
+def load_spacy_model():
     """
-    Summarize the input text using a text-generation model.
+    Load SpaCy model, download automatically if not found.
     """
-    if not text or text.strip() == "":
-        return ""
     try:
-        summary = summarizer(
-            text,
-            max_new_tokens=max_length,
-            do_sample=False,  # deterministic summary
-        )
-        # The model outputs a dict with 'generated_text'
-        return summary[0]["generated_text"]
-    except Exception as e:
-        print(f"Summarization error: {e}")
-        return text
+        nlp = spacy.load("en_core_web_sm")
+    except OSError:
+        spacy_download("en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm")
+    return nlp
+
+
+nlp = load_spacy_model()
+
+
+def summarize_post(text: str) -> str:
+    """
+    Naive summarization: return the first 2 sentences.
+    """
+    if not text.strip():
+        return ""
+    doc = nlp(text)
+    sentences = [sent.text for sent in doc.sents]
+    return " ".join(sentences[:2])
