@@ -1,4 +1,4 @@
-torch==2.0.1+cpu  # compatible with Python 3.11+
+tensorflow
 transformers==4.35.0
 sentencepiece
 streamlit==1.29.0
