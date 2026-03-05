@@ -1,14 +1,20 @@
+# utils/summarizer.py
 from transformers import pipeline
 
-# Use smaller model to avoid memory issues
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+# Use latest transformers-compatible pipeline
+summarizer = pipeline(
+    "text2text-generation",
+    model="sshleifer/distilbart-cnn-12-6",
+    device=-1,  # Use CPU, set 0 if using GPU
+)
 
 
-def summarize_post(text):
-    if not text.strip():
+def summarize_post(text, max_new_tokens=150):
+    """
+    Summarize a given text.
+    Returns the summarized string.
+    """
+    if not text or text.strip() == "":
         return ""
-    try:
-        result = summarizer(text, max_length=60, min_length=20, do_sample=False)
-        return result[0]["summary_text"]
-    except Exception as e:
-        return f"Summarization error: {e}"
+    result = summarizer(text, max_new_tokens=max_new_tokens)
+    return result[0]["generated_text"]
