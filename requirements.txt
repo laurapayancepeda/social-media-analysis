@@ -1,0 +1,12 @@
+streamlit
+pandas
+openpyxl
+transformers
+torch
+sentencepiece
+deep-translator
+spacy
+langdetect
+country_converter
+beautifulsoup4
+requests
