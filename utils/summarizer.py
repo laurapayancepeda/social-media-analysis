@@ -1,23 +1,27 @@
 # utils/summarizer.py
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
-# Use the latest text2text model supported by Transformers
-# distilbart-cnn-12-6 works with text2text-generation
-summarizer_pipeline = pipeline(
-    "summarization",
-    model="sshleifer/distilbart-cnn-12-6",
-    device=-1,  # CPU, set 0 for GPU
+# Load model & tokenizer explicitly
+model_name = "sshleifer/distilbart-cnn-12-6"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+# Use text2text-generation pipeline (works in all recent transformers)
+summarizer = pipeline(
+    "text2text-generation",
+    model=model,
+    tokenizer=tokenizer,
+    device=-1,  # CPU, set 0 if you have GPU
 )
 
 
-def summarize_post(text: str) -> str:
+def summarize_post(text, max_length=130, min_length=30):
     """
-    Summarize text using BART model.
+    Summarize a single text post
     """
-    if not text or text.strip() == "":
+    if not text or not isinstance(text, str):
         return ""
-    try:
-        summary_output = summarizer_pipeline(text, max_new_tokens=150)
-        return summary_output[0]["summary_text"]
-    except Exception as e:
-        return f"Error summarizing text: {e}"
+    result = summarizer(
+        text, max_length=max_length, min_length=min_length, do_sample=False
+    )
+    return result[0]["generated_text"]
