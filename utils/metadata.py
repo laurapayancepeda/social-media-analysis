@@ -1,5 +1,6 @@
 # utils/metadata.py
 import spacy
+from spacy.cli import download
 from langdetect import detect, DetectorFactory
 from geotext import GeoText
 

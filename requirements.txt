@@ -1,16 +1,13 @@
-# Core
-streamlit==1.29.0
-pandas==2.1.0
-openpyxl==3.1.2
-requests==2.31.0
-beautifulsoup4==4.12.2
-
-# NLP & Transformers
-torch==2.1.0
+torch==2.0.1+cpu  # compatible with Python 3.11+
 transformers==4.35.0
-sentencepiece==0.1.99
+sentencepiece
+streamlit==1.29.0
+pandas==2.0.3  # a more stable version for cloud builds
+openpyxl
+requests
+beautifulsoup4
 spacy==3.8.0
-deep-translator==1.10.1
-langdetect==1.0.9
-geotext==0.4.0
-country_converter==0.7.3
+deep-translator
+langdetect
+geotext
+country_converter
