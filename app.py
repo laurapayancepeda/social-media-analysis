@@ -1,32 +1,86 @@
 # app.py
 import streamlit as st
-from utils.summarizer import summarize_post
+import pandas as pd
+from utils.metadata import detect_language, extract_entities, detect_country
 from utils.translator import translate_text
 from utils.sentiment import sentiment_score
-from utils.metadata import detect_language, extract_entities, detect_country
+from utils.summarizer import summarize_post
 
-st.title("Social Media Post Analyzer")
+st.set_page_config(page_title="Social Media Analysis", layout="wide")
 
-# Input section
-st.header("Input Post & Comments")
-post_content = st.text_area("Enter Post Content")
-comments = st.text_area("Enter Comments (one per line)")
+st.title("Social Media Post & Comment Analyzer")
 
+# --- Input Section ---
+st.header("Input Post Data")
+
+url = st.text_input("Post URL")
+post_text = st.text_area("Post Text")
+comments_text = st.text_area("Comments (one per line)")
+
+# --- Process Button ---
 if st.button("Analyze"):
-    if post_content.strip() == "":
-        st.warning("Please enter post content")
+    if not url or not post_text:
+        st.warning("Please enter a URL and Post Text.")
     else:
-        st.subheader("Post Analysis")
-        st.write("**Original Post:**", post_content)
-        st.write("**Language:**", detect_language(post_content))
-        st.write("**Entities:**", extract_entities(post_content))
-        st.write("**Countries mentioned:**", detect_country(post_content))
-        st.write("**Sentiment:**", sentiment_score(post_content))
-        st.write("**Summary:**", summarize_post(post_content))
+        # --- Post Metadata ---
+        st.subheader("Post Metadata")
+        language = detect_language(post_text)
+        countries = detect_country(post_text)
+        entities = extract_entities(post_text)
+        summary = summarize_post(post_text)
 
-        if comments.strip() != "":
+        st.write(f"**Language:** {language}")
+        st.write(f"**Detected Countries:** {countries}")
+        st.write(f"**Entities (Org Names etc.):** {entities}")
+        st.write(f"**Post Summary:** {summary}")
+
+        post_sentiment = sentiment_score(post_text)
+        st.write(f"**Post Sentiment:** {post_sentiment}")
+
+        # --- Comments ---
+        if comments_text.strip():
             st.subheader("Comments Analysis")
-            for i, c in enumerate(comments.split("\n"), 1):
-                st.write(f"Comment {i}: {c}")
-                st.write("  - Translation:", translate_text(c))
-                st.write("  - Sentiment:", sentiment_score(c))
+            comments_list = [
+                c.strip() for c in comments_text.strip().split("\n") if c.strip()
+            ]
+            comment_data = []
+            for i, comment in enumerate(comments_list, start=1):
+                lang = detect_language(comment)
+                translation = (
+                    translate_text(comment, target="en") if lang != "en" else comment
+                )
+                sentiment = sentiment_score(translation)
+                countries_comment = detect_country(comment)
+                comment_data.append(
+                    {
+                        "Comment #": i,
+                        "Original Comment": comment,
+                        "Language": lang,
+                        "Translation": translation,
+                        "Sentiment": sentiment,
+                        "Detected Countries": countries_comment,
+                    }
+                )
+
+            df_comments = pd.DataFrame(comment_data)
+            st.dataframe(df_comments)
+
+        # --- Download Option ---
+        st.subheader("Download Results")
+        all_data = {
+            "URL": url,
+            "Post Text": post_text,
+            "Language": language,
+            "Detected Countries": ", ".join(countries),
+            "Entities": ", ".join(entities),
+            "Summary": summary,
+            "Post Sentiment": post_sentiment,
+        }
+        df_post = pd.DataFrame([all_data])
+
+        with pd.ExcelWriter("analysis.xlsx") as writer:
+            df_post.to_excel(writer, sheet_name="Post", index=False)
+            if comments_text.strip():
+                df_comments.to_excel(writer, sheet_name="Comments", index=False)
+
+        st.success("Analysis complete! Excel file saved as 'analysis.xlsx'.")
