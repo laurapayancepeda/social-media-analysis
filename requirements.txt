@@ -1,13 +1,16 @@
-tensorflow
+# CPU-friendly, compatible with Python 3.11
+tensorflow==2.12.0
+torch==2.1.0
 transformers==4.35.0
 sentencepiece
 streamlit==1.29.0
-pandas==2.0.3  # a more stable version for cloud builds
+pandas==2.0.3
 openpyxl
-requests
-beautifulsoup4
-spacy==3.8.0
 deep-translator
 langdetect
-geotext
 country_converter
+beautifulsoup4
+requests
+geotext
+spacy==3.8.0
+rich
