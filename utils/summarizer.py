@@ -1,29 +1,28 @@
 # utils/summarizer.py
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from transformers import pipeline
 
-# Model
-model_name = "sshleifer/distilbart-cnn-12-6"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
-# Use text-generation pipeline
+# Use text-generation pipeline for summarization
 summarizer = pipeline(
-    "text-generation",  # use text-generation instead of text2text-generation
-    model=model,
-    tokenizer=tokenizer,
-    device=-1,  # CPU
+    "text-generation",
+    model="sshleifer/distilbart-cnn-12-6",
+    tokenizer="sshleifer/distilbart-cnn-12-6",
 )
 
 
-def summarize_post(text, max_length=130, min_length=30):
-    if not text or not isinstance(text, str):
+def summarize_post(text: str, max_length: int = 60) -> str:
+    """
+    Summarize the input text using a text-generation model.
+    """
+    if not text or text.strip() == "":
         return ""
-    # Generate summary using text-generation
-    result = summarizer(
-        text,
-        max_length=max_length,
-        do_sample=False,
-        eos_token_id=tokenizer.eos_token_id,
-    )
-    # The generated text is in result[0]['generated_text']
-    return result[0]["generated_text"]
+    try:
+        summary = summarizer(
+            text,
+            max_new_tokens=max_length,
+            do_sample=False,  # deterministic summary
+        )
+        # The model outputs a dict with 'generated_text'
+        return summary[0]["generated_text"]
+    except Exception as e:
+        print(f"Summarization error: {e}")
+        return text

@@ -1,31 +1,27 @@
-# utils/metadata.py
-import langdetect
-import spacy
-from geotext import GeoText
+# utils/sentiment.py
+from transformers import pipeline
 
-# Load small English model (faster)
-nlp = spacy.load("en_core_web_sm")
+# Sentiment analysis model
+sentiment_model = pipeline(
+    "sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment"
+)
 
 
-def detect_language(text: str) -> str:
+def sentiment_score(text: str) -> int:
+    """
+    Return sentiment score: +1 positive, 0 neutral, -1 negative
+    """
     if not text or text.strip() == "":
-        return ""
+        return 0
     try:
-        return langdetect.detect(text)
-    except:
-        return "unknown"
-
-
-def extract_entities(text: str) -> list:
-    if not text or text.strip() == "":
-        return []
-    doc = nlp(text)
-    return [ent.text for ent in doc.ents]
-
-
-def detect_country(text: str) -> list:
-    if not text or text.strip() == "":
-        return []
-    places = GeoText(text)
-    countries = list(places.countries)
-    return countries
+        result = sentiment_model(text)[0]
+        label = result["label"].lower()
+        if "positive" in label:
+            return 1
+        elif "neutral" in label:
+            return 0
+        else:
+            return -1
+    except Exception as e:
+        print(f"Sentiment error: {e}")
+        return 0
