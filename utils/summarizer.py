@@ -1,11 +1,9 @@
-# utils/summarizer.py
 from transformers import pipeline
 
-# Use latest transformers-compatible pipeline
 summarizer = pipeline(
-    "text2text-generation",
+    "text2text",
     model="sshleifer/distilbart-cnn-12-6",
-    device=-1,  # Use CPU, set 0 if using GPU
+    device=-1,
 )
 
 
