@@ -1,5 +1,8 @@
 # app.py
 import streamlit as st
+
+st.set_page_config(page_title="Social Media Analyzer", layout="wide")
+
 import pandas as pd
 from utils.metadata import detect_language, extract_entities, detect_country
 from utils.translator import translate_text
@@ -7,7 +10,6 @@ from utils.sentiment import sentiment_score
 from utils.summarizer import summarize_post
 from utils.scraper import scrape_post
 
-st.set_page_config(page_title="Social Media Analyzer", layout="wide")
 st.title("Social Media Post & Comment Analyzer")
 
 # --- Input Section ---
@@ -29,7 +31,7 @@ if st.button("Analyze"):
         st.subheader("Post Metadata")
         language = detect_language(post_text)
         countries = detect_country(post_text)
-        entities = extract_entities(post_text)
+        entities = extract_entities(post_text)  # now returns []
         summary = summarize_post(post_text)
 
         st.write(f"**Language:** {language}")
@@ -40,7 +42,7 @@ if st.button("Analyze"):
         post_sentiment = sentiment_score(post_text)
         st.write(f"**Post Sentiment:** {post_sentiment}")
 
-        # --- Comments ---
+        # --- Comments Analysis ---
         if comments_text.strip():
             st.subheader("Comments Analysis")
             comments_list = [
@@ -64,10 +66,11 @@ if st.button("Analyze"):
                         "Detected Countries": countries_comment,
                     }
                 )
+
             df_comments = pd.DataFrame(comment_data)
             st.dataframe(df_comments)
 
-        # --- Download Option ---
+        # --- Download Results ---
         st.subheader("Download Results")
         all_data = {
             "URL": url,
