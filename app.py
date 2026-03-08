@@ -30,16 +30,24 @@ if st.button("Analyze"):
         # --- Post Metadata ---
         st.subheader("Post Metadata")
         language = detect_language(post_text)
-        countries = detect_country(post_text)
-        entities = extract_entities(post_text)  # now returns []
-        summary = summarize_post(post_text)
 
-        st.write(f"**Language:** {language}")
+        # Translate post if not English
+        if language != "en":
+            post_translated = translate_text(post_text, target="en")
+        else:
+            post_translated = post_text
+
+        countries = detect_country(post_translated)
+        entities = extract_entities(post_translated)  # still returns []
+        summary = summarize_post(post_translated)  # full text or first paragraph
+
+        st.write(f"**Original Language:** {language}")
+        st.write(f"**Post Text (Translated if needed):** {post_translated}")
         st.write(f"**Detected Countries:** {countries}")
         st.write(f"**Entities:** {entities}")
         st.write(f"**Post Summary:** {summary}")
 
-        post_sentiment = sentiment_score(post_text)
+        post_sentiment = sentiment_score(post_translated)
         st.write(f"**Post Sentiment:** {post_sentiment}")
 
         # --- Comments Analysis ---
@@ -55,7 +63,7 @@ if st.button("Analyze"):
                     translate_text(comment, target="en") if lang != "en" else comment
                 )
                 sentiment = sentiment_score(translation)
-                countries_comment = detect_country(comment)
+                countries_comment = detect_country(translation)
                 comment_data.append(
                     {
                         "Comment #": i,
@@ -74,7 +82,7 @@ if st.button("Analyze"):
         st.subheader("Download Results")
         all_data = {
             "URL": url,
-            "Post Text": post_text,
+            "Post Text": post_translated,
             "Language": language,
             "Detected Countries": ", ".join(countries),
             "Entities": ", ".join(entities),
