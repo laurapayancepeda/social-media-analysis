@@ -6,8 +6,6 @@ langdetect
 beautifulsoup4
 requests
 geotext
-spacy==3.8.11
-en-core-web-sm==3.8.0
 transformers==4.38.2
 torch==2.2.2
 sentencepiece
