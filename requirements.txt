@@ -1,16 +1,14 @@
-# CPU-friendly, compatible with Python 3.11
-tensorflow==2.12.0
-torch==2.1.0
-transformers==4.35.0
-sentencepiece
-streamlit==1.29.0
-pandas==2.0.3
+streamlit==1.31.0
+pandas==2.1.4
 openpyxl
 deep-translator
 langdetect
-country_converter
 beautifulsoup4
 requests
 geotext
-spacy==3.8.0
+spacy==3.8.11
+en-core-web-sm==3.8.0
+transformers==4.38.2
+torch==2.2.2
+sentencepiece
 rich
